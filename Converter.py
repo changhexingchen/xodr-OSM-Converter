@@ -3,6 +3,7 @@ import xml.etree.ElementTree as ET
 from math import fabs, sqrt
 import matplotlib.pyplot as plt
 from datetime import datetime
+import re
 
 from opendrivepy.opendrive import OpenDrive
 from opendrivepy.point import Point
@@ -483,7 +484,7 @@ class Converter(object):
             #     node_attrib = {'id': str(node.id), 'visible': 'true', 'version': '1', 'changeset': '1', 'timestamp': datetime.utcnow().strftime(
             #         '%Y-%m-%dT%H:%M:%SZ'), 'user': 'simon', 'uid': '1', 'lon': str(0.01), 'lat': str(0.01), 'ele':'2'}
             # else:
-            lat, lon, h = enu_to_geodetic(node.y, node.x, node.z, self.lat, self.lon, 0)
+            lat, lon, h = enu_to_geodetic(node.x, node.y, node.z, self.lat, self.lon, 0)
 
             node_attrib = {
                 'id': str(node.id), 
