@@ -96,14 +96,14 @@ class Converter(object):
                 is_Xshape_junction = False
 
                 if len(junction.lane_link) == 3:
-                    is_Tshape_junction = self.handle_Tshape(junction)
+                    is_Tshape_junction = self.handle_Tshape1(junction)
 
                 if len(junction.lane_link) == 4:
                     is_Xshape_junction = True
                     self.handle_Xshape(junction)
 
-                # if not is_Tshape_junction and not is_Xshape_junction:
-                #     self.handle_Nshape_avg(junction)
+                if not is_Tshape_junction and not is_Xshape_junction:
+                    self.handle_Nshape(junction)
 
         # return ways, nodes
 
@@ -479,8 +479,10 @@ class Converter(object):
             #     node_attrib = {'id': str(node.id), 'visible': 'true', 'version': '1', 'changeset': '1', 'timestamp': datetime.utcnow().strftime(
             #         '%Y-%m-%dT%H:%M:%SZ'), 'user': 'simon', 'uid': '1', 'lon': str(0.01), 'lat': str(0.01), 'ele':'2'}
             # else:
+            #lat, lon, h = enu_to_geodetic(node.x, node.y, node.z, self., lon_ref, h_ref)
+
             node_attrib = {'id': str(node.id), 'visible': 'true', 'version': '1', 'changeset': '1', 'timestamp': datetime.utcnow().strftime(
-                '%Y-%m-%dT%H:%M:%SZ'), 'user': 'simon', 'uid': '1', 'lon': str(node.x / self.scale), 'lat': str(node.y / self.scale), 'ele':'2'}
+                '%Y-%m-%dT%H:%M:%SZ'), 'user': 'simon', 'uid': '1', 'lon': str(100+node.x / 119700), 'lat': str(node.y / 119700), 'ele':'2'}
             node_root = ET.SubElement(osm_root, 'node', node_attrib)
 
             ET.SubElement(node_root, 'tag', {'k': "type", 'v': 'Smart'})
@@ -529,7 +531,8 @@ class Converter(object):
 # Converter('./xodr/city.xodr', 100000, 0.1).generate_osm('./osm/city.osm', False)
 # Converter('./xodr/highway.xodr', 100000, 0.1).generate_osm('./osm/highway.osm', False)
 # Converter('./xodr/t.xodr', 100000, 0.1).generate_osm('./osm/t.osm', False)
-# Converter('./xodr/town02.xodr', 100000, 0.1).generate_osm('./osm/town02.osm', False)
+Converter('./xodr/town01.xodr', 100000, 0.1).generate_osm('./osm/town01.osm', False)
+Converter('./xodr/town02.xodr', 100000, 0.1).generate_osm('./osm/town02.osm', False)
 Converter('./xodr/town03.xodr', 100000, 0.1).generate_osm('./osm/town03.osm', False)
-# Converter('./xodr/town04.xodr', 100000, 0.1).generate_osm('./osm/town04.osm', False)
+Converter('./xodr/town04.xodr', 100000, 0.1).generate_osm('./osm/town04.osm', False)
 Converter('./xodr/town05.xodr', 100000, 0.1).generate_osm('./osm/town05.osm', False)
