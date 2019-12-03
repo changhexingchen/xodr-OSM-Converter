@@ -1,48 +1,14 @@
-from math import fabs, sqrt
+import math
 from geompreds import orient2d, incircle
 from opendrivepy.point import Point
 
+a = 6378137
+b = 6356752.3142
+f = (a - b) / a
+e_sq = f * (2-f)
+
 def point_distance(pointa, pointb):
-    return sqrt((pointa.x - pointb.x) ** 2 + (pointa.y - pointb.y) ** 2)
-
-
-# def line_cross(line1, line2):
-#     x1 = line1[0].x
-#     y1 = line1[0].y
-#     x2 = line1[1].x
-#     y2 = line1[1].y
-
-#     x3 = line2[0].x
-#     y3 = line2[0].y
-#     x4 = line2[1].x
-#     y4 = line2[1].y
-
-#     # slope of L1 doesn't exist
-#     if (x2-x1) == 0:
-#         k1 = None
-#         b1 = 0
-#     else:
-#         k1 = (y2-y1)*1.0/(x2-x1)
-#         b1 = y1*1.0-x1*k1*1.0
-
-#     # slope of L2 doesn't exist
-#     if (x4-x3) == 0:
-#         k2 = None
-#         b2 = 0
-#     else:
-#         k2 = (y4-y3)*1.0/(x4-x3)
-#         b2 = y3*1.0-x3*k2*1.0
-
-#     if k1 == None and k2 == None:
-#         x = x1
-#         y = (y1 + y1 + y3 + y4) / 4.0
-#     if k2 == None:
-#         x = x3
-#         y = (y1 + y1 + y3 + y4) / 4.0
-#     if k1 is not None and k2 is not None:
-#         x = (b2-b1)*1.0/(k1-k2)
-#         y = k1*x*1.0+b1*1.0
-#     return Point(x,y)
+    return math.sqrt((pointa.x - pointb.x) ** 2 + (pointa.y - pointb.y) ** 2)
 
 def line(p1, p2):
     A = (p1.y - p2.y)
@@ -159,12 +125,12 @@ def ecef_to_geodetic(x, y, z):
     if x >=0 :    
         long = temp 
     elif (x < 0) & (y >= 0):
-        long = pi + temp 
+        long = math.pi + temp 
     else :
-        long = temp - pi 
+        long = temp - math.pi 
 
-    lat0 = lat/(pi/180) 
-    lon0 = long/(pi/180) 
+    lat0 = lat/(math.pi/180) 
+    lon0 = long/(math.pi/180) 
     h0 = height 
 
     return lat0, lon0, h0

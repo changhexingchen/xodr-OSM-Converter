@@ -25,7 +25,8 @@ class Converter(object):
 
         print("Reading OpenDrive file: " + filename)
         self.opendrive = OpenDrive(filename)
-        self.scale, minx, miny, maxx, maxy = self.set_scale(scene_scale)
+        self.lat, self.lon = self.get_center()
+        minx, miny, maxx, maxy = self.set_scale()
         self.min_distance = min_distance
         # print(self.scale)
 
@@ -38,30 +39,33 @@ class Converter(object):
         self.convert()
         print("done")
 
-    def set_scale(self, scene_scale):
+
+
+    def get_center(self):
+        bound = self.opendrive.bound
+        text = self.opendrive.geoRef.text
+        #+lat_0=4.9000000000000000e+1 +lon_0=8.0000000000000000e+0
+        pat = r"\d+\.\d+e[\+\-]\d"
+        res = re.findall(pat, text)
+        return float(res[0]), float(res[1])
+
+
+
+    def set_scale(self):
         # cast the bigger map into a smaller map
-        tar_scale = scene_scale  # target boundary is [-tar_scale,tar_scale]
         x = []
         y = []
-        length = []
 
         for road in self.opendrive.roads.values():
             for geometry in road.plan_view:
                 x.append(geometry.x)
                 y.append(geometry.y)
-                length.append(geometry.length)
 
         maxx = max(x)
         maxy = max(y)
         minx = min(x)
         miny = min(y)
-        # scale = max([(maxx - minx), (maxy - miny)]) / tar_scale
-        # print(scale)
-
-        # if scale == 0:
-        #     scale = max(length) / tar_scale
-
-        return scene_scale, minx, miny, maxx, maxy
+        return minx, miny, maxx, maxy
 
     def convert(self):
         # 1. convert all roads into nodes+ways
@@ -479,10 +483,19 @@ class Converter(object):
             #     node_attrib = {'id': str(node.id), 'visible': 'true', 'version': '1', 'changeset': '1', 'timestamp': datetime.utcnow().strftime(
             #         '%Y-%m-%dT%H:%M:%SZ'), 'user': 'simon', 'uid': '1', 'lon': str(0.01), 'lat': str(0.01), 'ele':'2'}
             # else:
-            #lat, lon, h = enu_to_geodetic(node.x, node.y, node.z, self., lon_ref, h_ref)
+            lat, lon, h = enu_to_geodetic(node.y, node.x, node.z, self.lat, self.lon, 0)
 
-            node_attrib = {'id': str(node.id), 'visible': 'true', 'version': '1', 'changeset': '1', 'timestamp': datetime.utcnow().strftime(
-                '%Y-%m-%dT%H:%M:%SZ'), 'user': 'simon', 'uid': '1', 'lon': str(100+node.x / 119700), 'lat': str(node.y / 119700), 'ele':'2'}
+            node_attrib = {
+                'id': str(node.id), 
+                'visible': 'true', 
+                'version': '1', 
+                'changeset': '1', 
+                'timestamp': datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ'), 
+                'user': 'simon', 
+                'uid': '1', 
+                'lon': str(lon), 
+                'lat': str(lat)
+                }
             node_root = ET.SubElement(osm_root, 'node', node_attrib)
 
             ET.SubElement(node_root, 'tag', {'k': "type", 'v': 'Smart'})
